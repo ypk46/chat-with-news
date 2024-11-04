@@ -1,6 +1,6 @@
 # Native imports
+from typing import List
 from datetime import datetime
-from typing import List, Optional
 
 # 3rd party imports
 from sqlalchemy import String, Text, func
