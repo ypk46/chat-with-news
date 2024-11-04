@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     name: str = "chat-with-news"
     env: str = Field("dev", env="ENV")
     db_conn: str = Field(...)
+    db_conn_timescale: str = Field(...)
+    ollama_host: str = Field("http://localhost:11434")
 
 
 settings = Settings()

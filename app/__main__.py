@@ -23,6 +23,7 @@ def cli():
 
 # Add CLI commands
 cli.add_command(cmd_serve)
+cli.add_command(cmd_vectorize)
 
 if __name__ == "__main__":
     cli()
