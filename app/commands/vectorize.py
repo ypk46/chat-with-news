@@ -30,7 +30,6 @@ def get_document(article: dict):
     )
 
     docs = []
-
     for chunk in text_splitter.split_text(article["content"]):
         content = (
             f"Author {article['author']}, title: {article['title']}, contents:{chunk}"
@@ -60,9 +59,10 @@ def embed_and_write(articles, vectorizer):
     """
     embedding = OllamaEmbeddings(model="llama3.2", base_url=settings.ollama_host)
     vector_store = TimescaleVector(
-        collection_name="blog_embedding",
+        collection_name="article_embeddings",
         service_url=settings.db_conn_timescale,
         embedding=embedding,
+        num_dimensions=3072,
         time_partition_interval=timedelta(days=30),
     )
 

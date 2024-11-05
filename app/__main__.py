@@ -24,6 +24,8 @@ def cli():
 # Add CLI commands
 cli.add_command(cmd_serve)
 cli.add_command(cmd_vectorize)
+cli.add_command(cmd_search)
+cli.add_command(feed_group)
 
 if __name__ == "__main__":
     cli()

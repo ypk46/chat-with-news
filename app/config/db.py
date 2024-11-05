@@ -14,3 +14,17 @@ SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
 
 # Create a Base class for declarative models
 Base = declarative_base()
+
+
+def get_db():
+    """
+    Get a database session.
+
+    Returns:
+        Session: A database session.
+    """
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
