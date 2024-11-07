@@ -73,7 +73,8 @@ def embed_and_write(articles, vectorizer):
     # Generate Document instance for each article
     documents = []
     for article in articles:
-        documents.extend(get_document(article))
+        if article["id"]:
+            documents.extend(get_document(article))
 
     if len(documents) == 0:
         return

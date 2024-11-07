@@ -35,6 +35,27 @@ class Article(Base):
         return f"<Article {self.id}: {self.title}>"
 
     @classmethod
+    def get(cls, page: int = 1, per_page: int = 10) -> List["Article"]:
+        """
+        Get articles.
+
+        Args:
+            page (int): Page number.
+            per_page (int): Number of articles per page.
+
+        Returns:
+            list: List of articles.
+        """
+        db = next(get_db())
+        return (
+            db.query(cls)
+            .order_by(cls.created_at)
+            .offset((page - 1) * per_page)
+            .limit(per_page)
+            .all()
+        )
+
+    @classmethod
     def create(cls, data: dict) -> "Article":
         """
         Create a new article.
@@ -57,3 +78,22 @@ class Article(Base):
         except Exception as e:
             db.rollback()
             raise e
+
+    def to_dict(self):
+        """
+        Convert article to dictionary.
+
+        Returns:
+            dict: Article dictionary.
+        """
+        return {
+            "id": self.id,
+            "title": self.title,
+            "content": self.content,
+            "summary": self.summary,
+            "author": self.author,
+            "tags": self.tags,
+            "published_at": self.published_at.isoformat(),
+            "created_at": self.created_at.isoformat(),
+            "updated_at": self.updated_at.isoformat(),
+        }

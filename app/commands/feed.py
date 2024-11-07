@@ -67,7 +67,7 @@ def cmd_feed_fetch() -> None:
         parsed = feedparser.parse(feed.url)
 
         # Iterate over entries
-        for entry in parsed.entries[:3]:
+        for entry in parsed.entries:
             try:
                 # Get the publication date
                 published_at = get_article_date(entry)

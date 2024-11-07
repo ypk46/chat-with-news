@@ -6,6 +6,7 @@ from flask import Flask
 # Project imports
 from app.config import Base, engine, settings
 from app.models import *  # pylint: disable=W0401, W0614
+from app.blueprints import *  # pylint: disable=W0401, W0614
 
 
 @click.command("serve")
@@ -21,7 +22,8 @@ def cmd_serve(port: int, threads: int) -> None:
     app = Flask(__name__)
 
     # Register blueprints
-    # app.register_blueprint(bp_news)
+    app.register_blueprint(articles_blp, url_prefix="/api")
+    app.register_blueprint(chats_blp, url_prefix="/api")
 
     # Run the app
     if settings.env == "dev":

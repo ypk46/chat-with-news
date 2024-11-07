@@ -56,3 +56,19 @@ class Feed(Base):
         """
         db = next(get_db())
         return db.query(cls).all()
+
+    def to_dict(self):
+        """
+        Convert feed to dictionary.
+
+        Returns:
+            dict: Feed dictionary.
+        """
+        return {
+            "id": self.id,
+            "name": self.name,
+            "url": self.url,
+            "image": self.image,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+        }
