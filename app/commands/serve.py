@@ -2,6 +2,7 @@
 import click
 import waitress
 from flask import Flask
+from flask_cors import CORS
 
 # Project imports
 from app.config import Base, engine, settings
@@ -20,6 +21,7 @@ def cmd_serve(port: int, threads: int) -> None:
 
     # Set up Flask app
     app = Flask(__name__)
+    CORS(app)
 
     # Register blueprints
     app.register_blueprint(articles_blp, url_prefix="/api")

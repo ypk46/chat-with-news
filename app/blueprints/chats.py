@@ -1,3 +1,6 @@
+# Native imports
+import json
+
 # 3rd party imports
 from sqlalchemy import text
 from flask import Blueprint, request, jsonify
@@ -21,13 +24,10 @@ def chat():
     # Fetch similar articles
     query = text(
         """
-        SELECT contents
-        FROM (
-            SELECT contents
-            FROM article_embeddings
-            ORDER BY embedding <=> ai.ollama_embed('llama3.2', :query_text, host=>'http://host.docker.internal:11434')
-            LIMIT 3
-        ) AS relevant_posts;
+        SELECT contents, metadata->>'article_id' as id
+        FROM article_embeddings
+        ORDER BY embedding <=> ai.ollama_embed('llama3.2', :query_text, host=>'http://host.docker.internal:11434')
+        LIMIT 3
         """
     )
     result = db.execute(query, {"query_text": query_text})
@@ -38,7 +38,7 @@ def chat():
     # Merge results
     context_text = ""
     for row in rows:
-        context_text += row[0] + " "
+        context_text += f"ID: {row[1]} Content: {row[0]}\n\n"
 
     # Generate response
     query = text(
@@ -46,7 +46,7 @@ def chat():
         SELECT ai.ollama_chat_complete(
             'llama3.2',
             jsonb_build_array(
-                jsonb_build_object('role', 'system', 'content', 'You are a helpful assistant. Use only the context provided to answer the question.'),
+                jsonb_build_object('role', 'system', 'content', 'You are a helpful assistant. Use only the context provided to answer the question and provide a JSON response like: {"answer": "The answer to the question.", "article_id": 123}'),
                 jsonb_build_object('role', 'user', 'content', format('Context: %s\n\nUser Question: %s\n\nAssistant:', CAST(:context_text AS TEXT), CAST(:query_text AS TEXT)))
             ),
             host=>'http://host.docker.internal:11434'
@@ -58,4 +58,4 @@ def chat():
     # Fetch response
     response = result.scalar()
 
-    return jsonify({"response": response})
+    return jsonify({"response": json.loads(response)})
