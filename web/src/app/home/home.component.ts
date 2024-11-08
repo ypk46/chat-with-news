@@ -56,15 +56,15 @@ export class HomeComponent {
     if (this.query) {
       this.loading = true;
       this.articleService
-        .queryArticles(this.query)
+        .queryArticles(this.query, '')
         .then((data) => {
           const article = this.articles.find(
-            (article) => article.id === data.response.article_id
+            (article) => article.id === data.article_id
           );
 
           if (article) this.chosenArticle = article;
 
-          this.answer = data.response.answer;
+          this.answer = data.answer;
         })
         .finally(() => {
           this.loading = false;
