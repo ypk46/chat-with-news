@@ -56,6 +56,17 @@ class Article(Base):
         )
 
     @classmethod
+    def get_all(cls) -> List["Article"]:
+        """
+        Get all articles.
+
+         Returns:
+            list: List of articles.
+        """
+        db = next(get_db())
+        return db.query(cls).all()
+
+    @classmethod
     def create(cls, data: dict) -> "Article":
         """
         Create a new article.
