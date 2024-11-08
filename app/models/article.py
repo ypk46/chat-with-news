@@ -69,6 +69,24 @@ class Article(Base):
         return db.query(cls).all()
 
     @classmethod
+    def get_by_date(cls, filter_date: datetime) -> List["Article"]:
+        """
+        Get articles by date.
+
+        Args:
+            filter_date (datetime): Date.
+
+        Returns:
+            list: List of articles.
+        """
+        db = next(get_db())
+        return (
+            db.query(cls)
+            .filter(func.date(cls.published_at) == filter_date.date())
+            .all()
+        )
+
+    @classmethod
     def create(cls, data: dict) -> "Article":
         """
         Create a new article.
