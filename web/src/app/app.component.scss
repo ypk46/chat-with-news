@@ -1,0 +1,13 @@
+.cwn-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  height: 64px;
+  background-color: #f8f8f8;
+  border-bottom: 1px solid #e0e0e0;
+
+  h2 {
+    font-size: 1.5rem;
+  }
+}
