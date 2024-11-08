@@ -31,15 +31,12 @@ def get_document(article: dict):
 
     docs = []
     for chunk in text_splitter.split_text(article["content"]):
-        content = (
-            f"Author {article['author']}, title: {article['title']}, contents:{chunk}"
-        )
+        content = f"Title: {article['title']}, Content:{chunk}"
         metadata = {
             "id": str(client.uuid_from_time(article["published_at"])),
             "article_id": article["id"],
-            "author": article["author"],
             "tags": article["tags"],
-            "published_at": article["published_at"].isoformat(),
+            "published_at": article["published_at"].strftime("%Y-%m-%d"),
         }
         docs.append(Document(page_content=content, metadata=metadata))
 

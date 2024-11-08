@@ -19,10 +19,10 @@ class Article(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False, index=True)
     content: Mapped[str] = mapped_column(Text, nullable=False)
     summary: Mapped[str] = mapped_column(Text, nullable=False)
-    author: Mapped[str] = mapped_column(String(255), nullable=True)
     tags: Mapped[List[str]] = mapped_column(
         ARRAY(String(255)), nullable=False, default=list
     )
+    link: Mapped[str] = mapped_column(Text, nullable=False)
     published_at: Mapped[datetime] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         nullable=False, insert_default=func.now()
@@ -30,6 +30,8 @@ class Article(Base):
     updated_at: Mapped[datetime] = mapped_column(
         nullable=True, insert_default=func.now(), onupdate=func.now()
     )
+    feed_name: Mapped[str] = mapped_column(String(255), nullable=False)
+    feed_image: Mapped[str] = mapped_column(String(255), nullable=False)
 
     def __repr__(self):
         return f"<Article {self.id}: {self.title}>"

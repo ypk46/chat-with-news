@@ -67,7 +67,7 @@ def cmd_feed_fetch() -> None:
         parsed = feedparser.parse(feed.url)
 
         # Iterate over entries
-        for entry in parsed.entries:
+        for entry in parsed.entries[:10]:
             try:
                 # Get the publication date
                 published_at = get_article_date(entry)
@@ -78,20 +78,17 @@ def cmd_feed_fetch() -> None:
                 if data is None:
                     click.echo(f"Skipping entry due to invalid summary: {entry.title}")
 
-                # Get article author
-                author = None
-                if "author" in entry:
-                    author = entry.author
-
                 # Insert the article into the database
                 Article.create(
                     {
                         "title": entry.title,
                         "content": data.get("content"),
                         "summary": data.get("summary"),
-                        "author": author,
                         "tags": data.get("tags"),
+                        "link": entry.link,
                         "published_at": published_at,
+                        "feed_image": feed.image,
+                        "feed_name": feed.name,
                     }
                 )
 

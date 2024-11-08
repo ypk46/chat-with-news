@@ -18,6 +18,7 @@ def chat():
     """
     data = request.get_json()
     query_text = data.get("query")
+    date = data.get("date")
 
     db = next(get_db())
 
@@ -26,14 +27,20 @@ def chat():
         """
         SELECT contents, metadata->>'article_id' as id
         FROM article_embeddings
+        WHERE metadata->>'published_at' = :date
         ORDER BY embedding <=> ai.ollama_embed('llama3.2', :query_text, host=>'http://host.docker.internal:11434')
         LIMIT 3
         """
     )
-    result = db.execute(query, {"query_text": query_text})
+    result = db.execute(query, {"query_text": query_text, "date": date})
 
     # Fetch results
     rows = result.fetchall()
+
+    if len(rows) == 0:
+        return jsonify(
+            {"answer": "No articles found based on your question.", "article_id": None}
+        )
 
     # Merge results
     context_text = ""
@@ -58,4 +65,4 @@ def chat():
     # Fetch response
     response = result.scalar()
 
-    return jsonify({"response": json.loads(response)})
+    return jsonify(json.loads(response))
