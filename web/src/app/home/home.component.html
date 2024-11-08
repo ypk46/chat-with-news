@@ -1,1 +1,59 @@
-<p>home works!</p>
+<ng-container *ngIf="chosenArticle">
+  <mat-card>
+    <mat-card-header class="my-3">
+      <mat-card-title class="cwn-card-title">{{ chosenArticle.title }}</mat-card-title>
+      <mat-card-subtitle class="cwn-card-subtitle">{{ chosenArticle.published_at | date: 'short' }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>{{ chosenArticle.summary }}</p>
+    </mat-card-content>
+  </mat-card>
+</ng-container>
+
+<ng-container *ngIf="!chosenArticle">
+  <mat-card>
+    <mat-card-content>
+      <p>Choose an article to read</p>
+    </mat-card-content>
+  </mat-card>
+</ng-container>
+
+<div class="d-flex justify-content-between mt-3">
+  <button mat-icon-button (click)="changeArticle(-1)" [disabled]="!hasPreviousArticle">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <button mat-icon-button (click)="changeArticle(1)" [disabled]="!hasNextArticle">
+    <mat-icon>arrow_forward</mat-icon>
+  </button>
+</div>
+
+<!-- Spacer -->
+<div class="my-5"></div>
+
+<mat-form-field class="cwn-form-field">
+  <mat-label>Ask a question</mat-label>
+  <input matInput type="text" [(ngModel)]="query">
+</mat-form-field>
+
+<div class="d-flex flex-row-reverse mb-3">
+  <button mat-flat-button (click)="search()" [disabled]="loading">Search</button>
+</div>
+
+<ng-container *ngIf="answer">
+  <mat-card>
+    <mat-card-header class="my-3">
+      <mat-card-title class="cwn-card-title">LLM Answer</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>{{ answer }}</p>
+    </mat-card-content>
+  </mat-card>
+</ng-container>
+
+<ng-container *ngIf="loading">
+  <div class="d-flex justify-content-center">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+</ng-container>
