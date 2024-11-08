@@ -6,3 +6,22 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_PASSWORD=super_secret
+
+  ollama:
+    container_name: ollama
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: all
+
+volumes:
+  ollama:   
+    
