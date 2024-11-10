@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'http://localhost:5000/api',
+  apiUrl: 'https://chat-with-news-server.onrender.com/api',
 };
