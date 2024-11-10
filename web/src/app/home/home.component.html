@@ -64,7 +64,7 @@
 
 <div class="row" *ngIf="articles.length > 0; else emptyArticles">
   @for (article of articles; track article.id) {
-  <div class="col-md-4 mb-4">
+  <div class="col-12 col-md-4 mb-2 mb-md-4">
     <mat-card>
       <mat-card-header class="my-3">
         <div mat-card-avatar class="cwn-card-avatar"
