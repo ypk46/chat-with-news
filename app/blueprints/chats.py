@@ -7,6 +7,7 @@ from flask import Blueprint, request, jsonify
 
 # Project imports
 from app.config.db import get_db
+from app.config import settings
 
 blp = Blueprint("chats", __name__)
 
@@ -28,11 +29,13 @@ def chat():
         SELECT contents, metadata->>'article_id' as id
         FROM article_embeddings
         WHERE metadata->>'published_at' = :date
-        ORDER BY embedding <=> ai.ollama_embed('llama3.2', :query_text, host=>'https://8fdec1f327ff.ngrok.app')
+        ORDER BY embedding <=> ai.ollama_embed('llama3.2', :query_text, host=>:host)
         LIMIT 6
         """
     )
-    result = db.execute(query, {"query_text": query_text, "date": date})
+    result = db.execute(
+        query, {"query_text": query_text, "date": date, "host": settings.ollama_host}
+    )
 
     # Fetch results
     rows = result.fetchall()
@@ -58,11 +61,18 @@ def chat():
                 jsonb_build_object('role', 'system', 'content', 'You are a helpful assistant. Use only the context provided to answer the question and provide the article ID from which your answer has more relation with. Format your response in JSON format like this: {"answer": "Your answer here", "article_id": 123}'),
                 jsonb_build_object('role', 'user', 'content', format('Context: %s\n\nUser Question: %s\n\nAssistant:', CAST(:context_text AS TEXT), CAST(:query_text AS TEXT)))
             ),
-            host=>'https://8fdec1f327ff.ngrok.app'
+            host=>:host
         )->'message'->>'content' as response;
         """
     )
-    result = db.execute(query, {"query_text": query_text, "context_text": context_text})
+    result = db.execute(
+        query,
+        {
+            "query_text": query_text,
+            "context_text": context_text,
+            "host": settings.ollama_host,
+        },
+    )
 
     # Fetch response
     response = result.scalar()
