@@ -1,36 +1,3 @@
-<ng-container *ngIf="chosenArticle">
-  <mat-card>
-    <mat-card-header class="my-3">
-      <mat-card-title class="cwn-card-title">{{ chosenArticle.title }}</mat-card-title>
-      <mat-card-subtitle class="cwn-card-subtitle">{{ chosenArticle.published_at | date: 'short' }}</mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <p>{{ chosenArticle.summary }}</p>
-    </mat-card-content>
-  </mat-card>
-</ng-container>
-
-<ng-container *ngIf="!chosenArticle">
-  <mat-card>
-    <mat-card-content>
-      <p>Choose an article to read</p>
-    </mat-card-content>
-  </mat-card>
-</ng-container>
-
-<div class="d-flex justify-content-between mt-3">
-  <button mat-icon-button (click)="changeArticle(-1)" [disabled]="!hasPreviousArticle">
-    <mat-icon>arrow_back</mat-icon>
-  </button>
-  <button mat-icon-button (click)="changeArticle(1)" [disabled]="!hasNextArticle">
-    <mat-icon>arrow_forward</mat-icon>
-  </button>
-</div>
-
-<!-- Spacer -->
-<div class="my-5"></div>
-
 <mat-form-field class="cwn-form-field">
   <mat-label>Ask a question</mat-label>
   <input matInput type="text" [(ngModel)]="query">
@@ -40,7 +7,7 @@
   <button mat-flat-button (click)="search()" [disabled]="loading">Search</button>
 </div>
 
-<ng-container *ngIf="answer">
+<ng-container *ngIf="answer && !loading">
   <mat-card>
     <mat-card-header class="my-3">
       <mat-card-title class="cwn-card-title">LLM Answer</mat-card-title>
@@ -50,10 +17,79 @@
       <p>{{ answer }}</p>
     </mat-card-content>
   </mat-card>
+
+  <div class="d-flex justify-content-center my-3">
+    <h3>Related Article</h3>
+  </div>
+
+  <mat-card *ngIf="chosenArticle" class="mb-3">
+    <mat-card-header class="my-3">
+      <div mat-card-avatar class="cwn-card-avatar"
+        [ngStyle]="{'background-image': 'url(' + chosenArticle.feed_image + ')'}"></div>
+      <mat-card-title class="cwn-card-title">{{
+        chosenArticle.title }}</mat-card-title>
+      <mat-card-subtitle class="cwn-card-subtitle">{{ chosenArticle.published_at | date: 'short' }}</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <p>{{ chosenArticle.summary }}</p>
+    </mat-card-content>
+
+    <mat-card-footer class=" p-3 d-flex flex-row-reverse">
+      <button mat-flat-button (click)="goTo(chosenArticle.link)">Go to article</button>
+    </mat-card-footer>
+  </mat-card>
 </ng-container>
 
 <ng-container *ngIf="loading">
-  <div class="d-flex justify-content-center">
+  <div class="d-flex justify-content-center mb-3">
     <mat-spinner diameter="50"></mat-spinner>
   </div>
 </ng-container>
+
+<div class="d-flex justify-content-center align-items-center mb-3">
+  <!-- Go back -->
+  <button mat-icon-button (click)="changeDate('previous')">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+
+  <!-- Date label -->
+  <h3 class="m-0 mx-2">{{ date | date: 'mediumDate' }}</h3>
+
+  <!-- Go next -->
+  <button mat-icon-button (click)="changeDate('next')">
+    <mat-icon>arrow_forward</mat-icon>
+  </button>
+</div>
+
+<div class="row" *ngIf="articles.length > 0; else emptyArticles">
+  @for (article of articles; track article.id) {
+  <div class="col-md-4 mb-4">
+    <mat-card>
+      <mat-card-header class="my-3">
+        <div mat-card-avatar class="cwn-card-avatar"
+          [ngStyle]="{'background-image': 'url(' + article.feed_image + ')'}"></div>
+        <mat-card-title class="cwn-card-title">{{
+          article.title }}</mat-card-title>
+        <mat-card-subtitle class="cwn-card-subtitle">{{ article.published_at | date: 'short' }}</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content class="cwn-card">
+        <p>{{ article.summary | slice:0:100 }}...</p>
+      </mat-card-content>
+
+      <mat-card-footer class=" p-3 d-flex flex-row-reverse">
+        <button mat-flat-button (click)="goTo(article.link)">Go to article</button>
+      </mat-card-footer>
+    </mat-card>
+  </div>
+  }
+</div>
+
+<ng-template #emptyArticles>
+  <mat-card>
+    <mat-card-content>
+      <p>No articles on date: {{ date | date: 'mediumDate' }}</p>
+    </mat-card-content>
+  </mat-card>
+</ng-template>

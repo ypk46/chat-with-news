@@ -23,8 +23,8 @@ export class ArticleService {
     this.url = environment.apiUrl;
   }
 
-  getArticles() {
-    return fetch(`${this.url}/articles`).then(
+  getArticles(date: string) {
+    return fetch(`${this.url}/articles?date=${date}`).then(
       (response) => <Promise<{ data: Article[] }>>response.json()
     );
   }

@@ -78,6 +78,10 @@ def cmd_feed_fetch() -> None:
                 if data is None:
                     click.echo(f"Skipping entry due to invalid summary: {entry.title}")
 
+                if data.get("summary") is None:
+                    click.echo(f"Skipping entry due to empty summary: {entry.title}")
+                    continue
+
                 # Insert the article into the database
                 Article.create(
                     {

@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Article, ArticleService } from '../article.service';
-import { DatePipe, NgIf } from '@angular/common';
+import { DatePipe, CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
@@ -13,7 +13,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-home',
   standalone: true,
   imports: [
-    NgIf,
+    CommonModule,
     MatCardModule,
     DatePipe,
     FormsModule,
@@ -30,40 +30,68 @@ export class HomeComponent {
   articles: Article[] = [];
   chosenArticle: Article | null = null;
   articleService = inject(ArticleService);
-  currentIndex = 0;
-  hasNextArticle = true;
-  hasPreviousArticle = true;
   query = '';
   answer = '';
   loading = false;
+  date = new Date();
 
   constructor() {
-    this.articleService.getArticles().then((response) => {
-      this.articles = response.data;
-      this.chosenArticle = this.articles[this.currentIndex];
-      this.hasPreviousArticle = false;
-    });
+    this.articleService
+      .getArticles(<string>this.formatDate(this.date))
+      .then((response) => {
+        this.articles = response.data;
+      });
   }
 
-  changeArticle(idx: number) {
-    this.currentIndex += idx;
-    this.chosenArticle = this.articles[this.currentIndex];
-    this.hasPreviousArticle = this.currentIndex > 0;
-    this.hasNextArticle = this.currentIndex < this.articles.length - 1;
+  /**
+   * Format date to YYYY-MM-DD string.
+   */
+  formatDate(date: Date) {
+    return new DatePipe('en-US').transform(date, 'yyyy-MM-dd');
+  }
+
+  /**
+   * Change current date attribute based on the action.
+   * @param action - 'next' or 'previous'
+   */
+  changeDate(action: string) {
+    if (action === 'next') {
+      this.date.setDate(this.date.getDate() + 1);
+    } else {
+      this.date.setDate(this.date.getDate() - 1);
+    }
+
+    // Reload the date
+    this.date = new Date(this.date);
+
+    this.articleService
+      .getArticles(<string>this.formatDate(this.date))
+      .then((response) => {
+        this.articles = response.data;
+      });
+  }
+
+  /**
+   * Go to a specific link in a blank page.
+   * @param link - URL to go to
+   */
+  goTo(link: string) {
+    window.open(link, '_blank');
   }
 
   search() {
     if (this.query) {
       this.loading = true;
+      this.answer = '';
+      this.chosenArticle = null;
+
       this.articleService
-        .queryArticles(this.query, '')
+        .queryArticles(this.query, <string>this.formatDate(this.date))
         .then((data) => {
-          const article = this.articles.find(
+          const match = this.articles.find(
             (article) => article.id === data.article_id
           );
-
-          if (article) this.chosenArticle = article;
-
+          if (match) this.chosenArticle = match;
           this.answer = data.answer;
         })
         .finally(() => {

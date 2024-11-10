@@ -12,10 +12,12 @@ charset-normalizer==3.4.0
 click==8.1.7
 cssselect==1.2.0
 dataclasses-json==0.6.7
+debugpy==1.8.8
 feedfinder2==0.0.4
 feedparser==6.0.11
 filelock==3.16.1
 Flask==3.0.3
+Flask-Cors==5.0.0
 frozenlist==1.5.0
 greenlet==3.1.1
 h11==0.14.0
