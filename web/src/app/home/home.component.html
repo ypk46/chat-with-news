@@ -8,7 +8,7 @@
 </div>
 
 <ng-container *ngIf="answer && !loading">
-  <mat-card>
+  <mat-card class="mb-4">
     <mat-card-header class="my-3">
       <mat-card-title class="cwn-card-title">LLM Answer</mat-card-title>
     </mat-card-header>
@@ -18,8 +18,8 @@
     </mat-card-content>
   </mat-card>
 
-  <div class="d-flex justify-content-center my-3">
-    <h3>Related Article</h3>
+  <div class="d-flex justify-content-center mb-3">
+    <h3 class="m-0">Related Article</h3>
   </div>
 
   <mat-card *ngIf="chosenArticle" class="mb-3">
@@ -64,7 +64,7 @@
 
 <div class="row" *ngIf="articles.length > 0; else emptyArticles">
   @for (article of articles; track article.id) {
-  <div class="col-12 col-md-4 mb-2 mb-md-4">
+  <div class="col-12 col-md-4 mb-4">
     <mat-card>
       <mat-card-header class="my-3">
         <div mat-card-avatar class="cwn-card-avatar"
